@@ -1,51 +1,66 @@
+"use client"
 
-import { Bell, Search, Menu } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Bars3Icon } from "@heroicons/react/24/outline"
+import { SearchBar } from "./SearchBar"
+import { NotificationsMenu } from "./NotificationsMenu"
+import { UserMenu } from "./UserMenu"
 
 interface HeaderProps {
   setSidebarOpen: (open: boolean) => void;
 }
 
-export const Header = ({ setSidebarOpen }: HeaderProps): JSX.Element => {
+export const Header = ({ setSidebarOpen }: HeaderProps) => {
+  const handleSearch = (query: string) => {
+    console.log("Search query:", query);
+    // Implement search functionality
+  };
+
+  // Mock notifications data
+  const notifications = [
+    {
+      id: "1",
+      title: "New Report Available",
+      message: "The Q2 2025 financial report is now available for review.",
+      time: "1h ago",
+      read: false,
+    },
+    {
+      id: "2",
+      title: "System Update",
+      message: "System maintenance scheduled for tonight at 2 AM EST.",
+      time: "2h ago",
+      read: true,
+    },
+  ];
+
+  // Mock user data
+  const user = {
+    name: "John Doe",
+    email: "john.doe@example.com",
+  };
+
   return (
-    <header className="sticky top-0 z-30 border-b border-border/40 bg-background/95 backdrop-blur py-3 px-4 md:px-6 flex items-center justify-between gap-4 animate-fade-in">
-      <Button 
-        variant="ghost" 
-        size="icon" 
-        className="lg:hidden" 
-        onClick={() => setSidebarOpen(true)} 
-        aria-label="Toggle menu"
+    <header className="sticky top-0 z-40 flex h-16 flex-shrink-0 border-b border-gray-200 bg-white shadow-sm">
+      <button
+        type="button"
+        className="border-r border-gray-200 px-4 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 lg:hidden"
+        onClick={() => setSidebarOpen(true)}
       >
-        <Menu className="h-5 w-5" />
-      </Button>
-      
-      <div className="flex-1 max-w-md relative hidden md:flex">
-        <div className="relative w-full">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input 
-            placeholder="Search..." 
-            className="pl-9 w-full bg-muted/50 border-muted focus-visible:border-primary/30"
-          />
+        <span className="sr-only">Open sidebar</span>
+        <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+      </button>
+
+      <div className="flex flex-1 justify-between px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-1">
+          <SearchBar onChange={handleSearch} placeholder="Search dashboard..." className="max-w-lg" />
         </div>
-      </div>
-      
-      <div className="flex items-center gap-3">
-        <Button variant="ghost" size="icon" className="relative" aria-label="Notifications">
-          <Bell className="h-5 w-5" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-danger rounded-full"></span>
-        </Button>
-        
-        <div className="flex items-center gap-3">
-          <div className="hidden md:block text-right">
-            <div className="font-medium text-sm">Park Admin</div>
-            <div className="text-xs text-muted-foreground">admin@magicworld.com</div>
-          </div>
-          <div className="w-9 h-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium shadow-sm border border-primary-foreground/10">
-            PA
-          </div>
+
+        <div className="ml-4 flex items-center space-x-4">
+          <NotificationsMenu notifications={notifications} />
+          <UserMenu user={user} />
         </div>
       </div>
     </header>
   );
 };
+

@@ -1,152 +1,220 @@
+"use client"
 
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  Users, 
-  BarChart3, 
-  DollarSign, 
-  Star, 
-  Settings,
-  Calendar,
-  Ticket,
-  X,
-  PanelLeft
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { Link } from 'react-router-dom';
+import { Fragment } from "react"
+import { Dialog, Transition } from "@headlessui/react"
+import { XMarkIcon } from "@heroicons/react/24/outline"
+import { Link, useLocation } from "react-router-dom"
+import {
+  HomeIcon,
+  CalendarIcon,
+  ChartBarIcon,
+  CurrencyDollarIcon,
+  BuildingLibraryIcon,
+  PresentationChartLineIcon,
+  Cog8ToothIcon,
+  CloudIcon,
+  UserGroupIcon,
+  DocumentTextIcon,
+  GlobeAltIcon,
+} from "@heroicons/react/24/outline"
+import { AttractionPlanLogo } from "../ui/Logo"
 
 interface SidebarProps {
-  sidebarOpen: boolean;
-  setSidebarOpen: (open: boolean) => void;
+  sidebarOpen: boolean
+  setSidebarOpen: (open: boolean) => void
 }
 
-export const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps): JSX.Element => {
-  const location = useLocation();
-  const [mounted, setMounted] = useState(false);
+export const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
+  const { pathname } = useLocation()
 
-  // Animation for initial mount
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const navigation = [
+    { name: "Dashboard", href: "/", icon: HomeIcon },
+    { name: "Planning & Scenarios", href: "/planning", icon: CalendarIcon },
+    { name: "Financial Modeling", href: "/financial", icon: ChartBarIcon },
+    { name: "Revenue Optimization", href: "/revenue", icon: CurrencyDollarIcon },
+    { name: "Financial Consolidation", href: "/consolidation", icon: BuildingLibraryIcon },
+    { name: "Executive Intelligence", href: "/executive", icon: PresentationChartLineIcon },
+    { name: "Cross-Functional Analytics", href: "/analytics", icon: CloudIcon },
+    { name: "Sustainability & ESG", href: "/analytics?tab=sustainability", icon: GlobeAltIcon },
+  ]
 
-  // Menu items with proper route matching
-  const menuItems = [
-    {
-      label: 'Overview',
-      items: [
-        { name: 'Dashboard', icon: LayoutDashboard, path: '/' },
-        { name: 'Calendar', icon: Calendar, path: '/calendar' },
-      ]
-    },
-    {
-      label: 'Analytics',
-      items: [
-        { name: 'Attendance', icon: Users, path: '/attendance' },
-        { name: 'Revenue', icon: DollarSign, path: '/revenue' },
-        { name: 'Satisfaction', icon: Star, path: '/satisfaction' },
-      ]
-    },
-    {
-      label: 'Management',
-      items: [
-        { name: 'Operations', icon: BarChart3, path: '/operations' },
-        { name: 'Tickets', icon: Ticket, path: '/tickets' },
-        { name: 'Settings', icon: Settings, path: '/settings' },
-      ]
-    },
-  ];
-
-  // Check if a route is active (exact match or starts with for nested routes)
-  const isActiveRoute = (path: string) => {
-    if (path === '/') {
-      return location.pathname === '/';
-    }
-    return location.pathname.startsWith(path);
-  };
+  const secondaryNavigation = [
+    { name: "Settings", href: "/settings", icon: Cog8ToothIcon },
+    { name: "Team", href: "/team", icon: UserGroupIcon },
+    { name: "Documentation", href: "/docs", icon: DocumentTextIcon },
+  ]
 
   return (
     <>
-      {/* Mobile overlay */}
-      <div 
-        className={cn(
-          "fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden transition-opacity duration-200",
-          sidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-        )}
-        onClick={() => setSidebarOpen(false)}
-      />
-      
-      {/* Sidebar */}
-      <div 
-        className={cn(
-          "fixed inset-y-0 left-0 z-50 w-72 bg-sidebar border-r border-sidebar-border transition-transform duration-300 lg:translate-x-0 shadow-xl lg:shadow-none",
-          sidebarOpen ? "translate-x-0" : "-translate-x-full",
-          mounted ? "animate-fade-in" : "opacity-0"
-        )}
-      >
-        <div className="flex flex-col h-full">
-          {/* Mobile header with close button */}
-          <div className="lg:hidden flex items-center justify-between p-4 border-b border-sidebar-border/50">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-md bg-sidebar-accent text-sidebar-accent-foreground flex items-center justify-center font-bold shadow-inner">MW</div>
-              <span className="font-bold text-lg text-sidebar-foreground">Magic World</span>
-            </div>
-            <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(false)} className="text-sidebar-foreground hover:bg-sidebar-border/20">
-              <X className="h-5 w-5" />
-            </Button>
-          </div>
-          
-          {/* Desktop logo */}
-          <div className="hidden lg:flex items-center space-x-2 p-5">
-            <div className="w-10 h-10 rounded-md bg-sidebar-accent text-sidebar-accent-foreground flex items-center justify-center font-bold text-lg shadow-sm">MW</div>
-            <span className="font-bold text-xl text-sidebar-foreground">Magic World</span>
-          </div>
+      {/* Mobile sidebar */}
+      <Transition.Root show={sidebarOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-50 lg:hidden" onClose={setSidebarOpen}>
+          <Transition.Child
+            as={Fragment}
+            enter="transition-opacity ease-linear duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="transition-opacity ease-linear duration-300"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-gray-900/80" />
+          </Transition.Child>
 
-          {/* Navigation items with animations */}
-          <div className="flex-grow overflow-y-auto py-5 px-3">
-            {menuItems.map((section, idx) => (
-              <div key={idx} className={cn("space-y-1 mb-6", mounted && "animate-slide-in")} style={{ animationDelay: `${idx * 100}ms` }}>
-                <h3 className="text-sidebar-foreground/70 font-medium text-xs uppercase tracking-wider px-3 mb-3">{section.label}</h3>
-                {section.items.map((item, itemIdx) => {
-                  const isActive = isActiveRoute(item.path);
-                  return (
-                    <Link 
-                      key={item.name} 
-                      to={item.path}
-                      onClick={() => setSidebarOpen(false)}
-                      className={cn(
-                        "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors",
-                        isActive 
-                          ? "bg-sidebar-accent text-sidebar-accent-foreground" 
-                          : "text-sidebar-foreground hover:bg-sidebar-border/20"
-                      )}
-                    >
-                      <item.icon className={cn("h-5 w-5", isActive ? "text-sidebar-accent-foreground" : "text-sidebar-foreground/70")} />
-                      <span>{item.name}</span>
-                    </Link>
-                  );
-                })}
-              </div>
-            ))}
-          </div>
-          
-          {/* Footer */}
-          <div className="p-4 border-t border-sidebar-border/50 flex items-center justify-between">
-            <div className="text-sm text-sidebar-foreground/80">
-              <p>Magic World Parks</p>
-            </div>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="text-sidebar-foreground/70 hover:bg-sidebar-border/20 hidden lg:flex" 
-              onClick={() => setSidebarOpen(!sidebarOpen)}
+          <div className="fixed inset-0 flex">
+            <Transition.Child
+              as={Fragment}
+              enter="transition ease-in-out duration-300 transform"
+              enterFrom="-translate-x-full"
+              enterTo="translate-x-0"
+              leave="transition ease-in-out duration-300 transform"
+              leaveFrom="translate-x-0"
+              leaveTo="-translate-x-full"
             >
-              <PanelLeft className="h-5 w-5" />
-            </Button>
+              <Dialog.Panel className="relative mr-16 flex w-full max-w-xs flex-1">
+                <div className="absolute left-full top-0 flex w-16 justify-center pt-5">
+                  <button
+                    type="button"
+                    className="-m-2.5 p-2.5"
+                    onClick={() => setSidebarOpen(false)}
+                  >
+                    <span className="sr-only">Close sidebar</span>
+                    <XMarkIcon className="h-6 w-6 text-white" aria-hidden="true" />
+                  </button>
+                </div>
+
+                <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-primary-800 px-6 pb-4">
+                  <div className="flex h-16 shrink-0 items-center">
+                    <AttractionPlanLogo className="h-8 w-auto text-white" />
+                  </div>
+                  <nav className="flex flex-1 flex-col">
+                    <ul role="list" className="flex flex-1 flex-col gap-y-7">
+                      <li>
+                        <ul role="list" className="-mx-2 space-y-1">
+                          {navigation.map((item) => (
+                            <li key={item.name}>
+                              <Link
+                                to={item.href}
+                                className={`
+                                  group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6
+                                  ${
+                                    pathname === item.href
+                                      ? "bg-primary-700 text-white"
+                                      : "text-primary-200 hover:bg-primary-700 hover:text-white"
+                                  }
+                                `}
+                                onClick={() => setSidebarOpen(false)}
+                              >
+                                <item.icon
+                                  className={`
+                                    h-6 w-6 shrink-0
+                                    ${
+                                      pathname === item.href
+                                        ? "text-white"
+                                        : "text-primary-200 group-hover:text-white"
+                                    }
+                                  `}
+                                  aria-hidden="true"
+                                />
+                                {item.name}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </li>
+                      <li>
+                        <div className="text-xs font-semibold leading-6 text-primary-200">Support</div>
+                        <ul role="list" className="mt-2 -mx-2 space-y-1">
+                          {secondaryNavigation.map((item) => (
+                            <li key={item.name}>
+                              <Link
+                                to={item.href}
+                                className="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-primary-200 hover:bg-primary-700 hover:text-white"
+                                onClick={() => setSidebarOpen(false)}
+                              >
+                                <item.icon
+                                  className="h-6 w-6 shrink-0 text-primary-200 group-hover:text-white"
+                                  aria-hidden="true"
+                                />
+                                {item.name}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
+              </Dialog.Panel>
+            </Transition.Child>
           </div>
+        </Dialog>
+      </Transition.Root>
+
+      {/* Desktop sidebar */}
+      <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-64 lg:flex-col">
+        <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-primary-800 px-6 pb-4">
+          <div className="flex h-16 shrink-0 items-center">
+            <AttractionPlanLogo className="h-8 w-auto text-white" />
+          </div>
+          <nav className="flex flex-1 flex-col">
+            <ul role="list" className="flex flex-1 flex-col gap-y-7">
+              <li>
+                <ul role="list" className="-mx-2 space-y-1">
+                  {navigation.map((item) => (
+                    <li key={item.name}>
+                      <Link
+                        to={item.href}
+                        className={`
+                          group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6
+                          ${
+                            pathname === item.href
+                              ? "bg-primary-700 text-white"
+                              : "text-primary-200 hover:bg-primary-700 hover:text-white"
+                          }
+                        `}
+                      >
+                        <item.icon
+                          className={`
+                            h-6 w-6 shrink-0
+                            ${
+                              pathname === item.href
+                                ? "text-white"
+                                : "text-primary-200 group-hover:text-white"
+                            }
+                          `}
+                          aria-hidden="true"
+                        />
+                        {item.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+              <li className="mt-auto">
+                <div className="text-xs font-semibold leading-6 text-primary-200">Support</div>
+                <ul role="list" className="mt-2 -mx-2 space-y-1">
+                  {secondaryNavigation.map((item) => (
+                    <li key={item.name}>
+                      <Link
+                        to={item.href}
+                        className="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-primary-200 hover:bg-primary-700 hover:text-white"
+                      >
+                        <item.icon
+                          className="h-6 w-6 shrink-0 text-primary-200 group-hover:text-white"
+                          aria-hidden="true"
+                        />
+                        {item.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            </ul>
+          </nav>
         </div>
       </div>
     </>
-  );
-};
+  )
+}
+

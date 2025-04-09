@@ -1,4 +1,3 @@
-
 "use client"
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
@@ -33,3 +32,4 @@ const App = (): JSX.Element => {
 }
 
 export default App;
+
