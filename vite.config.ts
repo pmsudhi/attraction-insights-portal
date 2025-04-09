@@ -18,7 +18,6 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: true,
     emptyOutDir: true,
-    // Ensure TypeScript configuration is properly handled
     rollupOptions: {
       output: {
         manualChunks: {
@@ -31,14 +30,6 @@ export default defineConfig({
     include: ['react', 'react-dom', 'react-router-dom'],
   },
   esbuild: {
-    logOverride: { 'this-is-undefined-in-esm': 'silent' },
-    // Add TypeScript-specific configurations to avoid emit conflicts
-    tsconfigRaw: {
-      compilerOptions: {
-        skipLibCheck: true,
-        declaration: false,
-        composite: false
-      }
-    }
+    logOverride: { 'this-is-undefined-in-esm': 'silent' }
   }
 })
