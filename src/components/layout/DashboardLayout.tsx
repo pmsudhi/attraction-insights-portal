@@ -6,6 +6,7 @@ import { Sidebar } from "./Sidebar"
 import { Header } from "./Header"
 import { ErrorBoundary } from "../ErrorBoundary"
 import { Toaster } from "@/components/ui/toaster"
+import { useAppContext } from "@/context/AppContext"
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -13,20 +14,20 @@ interface DashboardLayoutProps {
 }
 
 const DashboardLayout = ({ children, className = "" }: DashboardLayoutProps) => {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [isLoaded, setIsLoaded] = useState(false)
+  const { sidebarCollapsed, toggleSidebar } = useAppContext();
+  const [isLoaded, setIsLoaded] = useState(false);
   
   // Animation on initial load
   useEffect(() => {
-    setIsLoaded(true)
-  }, [])
+    setIsLoaded(true);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
-      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      <Sidebar sidebarOpen={!sidebarCollapsed} setSidebarOpen={(open) => toggleSidebar()} />
       
       <div className="flex min-h-screen flex-col lg:pl-72 transition-all duration-300">
-        <Header setSidebarOpen={setSidebarOpen} />
+        <Header setSidebarOpen={toggleSidebar} />
         
         <main className="flex-1 py-8 md:py-10">
           <div className={`mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 ${isLoaded ? 'animate-fade-in' : 'opacity-0'}`}>
