@@ -1,36 +1,35 @@
+"use client"
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import Attendance from "./pages/Attendance";
-import Revenue from "./pages/Revenue";
-import Satisfaction from "./pages/Satisfaction";
-import Operations from "./pages/Operations";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import { AppProvider } from "./context/AppContext"
+import DashboardLayout from "./components/layout/DashboardLayout"
+import Dashboard from "./pages/Dashboard"
+import Planning from "./pages/Planning"
+import Financial from "./pages/Financial"
+import Revenue from "./pages/Revenue"
+import Consolidation from "./pages/Consolidation"
+import Executive from "./pages/Executive"
+import Analytics from "./pages/Analytics"
 
-const queryClient = new QueryClient();
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/attendance" element={<Attendance />} />
-          <Route path="/revenue" element={<Revenue />} />
-          <Route path="/satisfaction" element={<Satisfaction />} />
-          <Route path="/operations" element={<Operations />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = (): JSX.Element => {
+  return (
+    <Router>
+      <AppProvider>
+        <DashboardLayout>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/planning" element={<Planning />} />
+            <Route path="/financial" element={<Financial />} />
+            <Route path="/revenue" element={<Revenue />} />
+            <Route path="/consolidation" element={<Consolidation />} />
+            <Route path="/executive" element={<Executive />} />
+            <Route path="/analytics" element={<Analytics />} />
+          </Routes>
+        </DashboardLayout>
+      </AppProvider>
+    </Router>
+  )
+}
 
 export default App;
+

@@ -1,116 +1,110 @@
 import * as React from "react"
-import { Drawer as DrawerPrimitive } from "vaul"
+import { cn } from "../../lib/utils"
+import { XMarkIcon } from "@heroicons/react/24/solid"
 
-import { cn } from "@/lib/utils"
+type DrawerPosition = "left" | "right" | "top" | "bottom"
 
-const Drawer = ({
-  shouldScaleBackground = true,
-  ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Root>) => (
-  <DrawerPrimitive.Root
-    shouldScaleBackground={shouldScaleBackground}
-    {...props}
-  />
-)
-Drawer.displayName = "Drawer"
-
-const DrawerTrigger = DrawerPrimitive.Trigger
-
-const DrawerPortal = DrawerPrimitive.Portal
-
-const DrawerClose = DrawerPrimitive.Close
-
-const DrawerOverlay = React.forwardRef<
-  React.ElementRef<typeof DrawerPrimitive.Overlay>,
-  React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Overlay>
->(({ className, ...props }, ref) => (
-  <DrawerPrimitive.Overlay
-    ref={ref}
-    className={cn("fixed inset-0 z-50 bg-black/80", className)}
-    {...props}
-  />
-))
-DrawerOverlay.displayName = DrawerPrimitive.Overlay.displayName
-
-const DrawerContent = React.forwardRef<
-  React.ElementRef<typeof DrawerPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Content>
->(({ className, children, ...props }, ref) => (
-  <DrawerPortal>
-    <DrawerOverlay />
-    <DrawerPrimitive.Content
-      ref={ref}
-      className={cn(
-        "fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-[10px] border bg-background",
-        className
-      )}
-      {...props}
-    >
-      <div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted" />
-      {children}
-    </DrawerPrimitive.Content>
-  </DrawerPortal>
-))
-DrawerContent.displayName = "DrawerContent"
-
-const DrawerHeader = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn("grid gap-1.5 p-4 text-center sm:text-left", className)}
-    {...props}
-  />
-)
-DrawerHeader.displayName = "DrawerHeader"
-
-const DrawerFooter = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn("mt-auto flex flex-col gap-2 p-4", className)}
-    {...props}
-  />
-)
-DrawerFooter.displayName = "DrawerFooter"
-
-const DrawerTitle = React.forwardRef<
-  React.ElementRef<typeof DrawerPrimitive.Title>,
-  React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Title>
->(({ className, ...props }, ref) => (
-  <DrawerPrimitive.Title
-    ref={ref}
-    className={cn(
-      "text-lg font-semibold leading-none tracking-tight",
-      className
-    )}
-    {...props}
-  />
-))
-DrawerTitle.displayName = DrawerPrimitive.Title.displayName
-
-const DrawerDescription = React.forwardRef<
-  React.ElementRef<typeof DrawerPrimitive.Description>,
-  React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Description>
->(({ className, ...props }, ref) => (
-  <DrawerPrimitive.Description
-    ref={ref}
-    className={cn("text-sm text-muted-foreground", className)}
-    {...props}
-  />
-))
-DrawerDescription.displayName = DrawerPrimitive.Description.displayName
-
-export {
-  Drawer,
-  DrawerPortal,
-  DrawerOverlay,
-  DrawerTrigger,
-  DrawerClose,
-  DrawerContent,
-  DrawerHeader,
-  DrawerFooter,
-  DrawerTitle,
-  DrawerDescription,
+interface DrawerProps {
+  children: React.ReactNode
+  className?: string
+  onClose: () => void
+  open: boolean
+  position?: DrawerPosition
+  title?: string
 }
+
+const POSITION_STYLES: Record<DrawerPosition, string> = {
+  left: "left-0 h-full w-full max-w-sm transform -translate-x-full",
+  right: "right-0 h-full w-full max-w-sm transform translate-x-full",
+  top: "top-0 w-full h-full max-h-sm transform -translate-y-full",
+  bottom: "bottom-0 w-full h-full max-h-sm transform translate-y-full",
+}
+
+const OPEN_STYLES: Record<DrawerPosition, string> = {
+  left: "translate-x-0",
+  right: "translate-x-0",
+  top: "translate-y-0",
+  bottom: "translate-y-0",
+}
+
+export const Drawer = React.forwardRef<HTMLDivElement, DrawerProps>(
+  (
+    {
+      children,
+      className,
+      onClose,
+      open,
+      position = "right",
+      title,
+    },
+    ref
+  ) => {
+    React.useEffect(() => {
+      const handleEscape = (event: KeyboardEvent) => {
+        if (event.key === "Escape") {
+          onClose()
+        }
+      }
+
+      if (open) {
+        document.addEventListener("keydown", handleEscape)
+        document.body.style.overflow = "hidden"
+      }
+
+      return () => {
+        document.removeEventListener("keydown", handleEscape)
+        document.body.style.overflow = "unset"
+      }
+    }, [onClose, open])
+
+    if (!open) {
+      return null
+    }
+
+    return (
+      <div
+        className="fixed inset-0 z-50 flex"
+        ref={ref}
+      >
+        <div
+          className="fixed inset-0 bg-black/50"
+          onClick={onClose}
+        />
+        <div
+          className={cn(
+            "fixed bg-white shadow-lg transition-transform duration-300 ease-in-out",
+            POSITION_STYLES[position],
+            open && OPEN_STYLES[position],
+            className
+          )}
+        >
+          <div className="flex h-full flex-col">
+            <div className="flex items-center justify-between border-b px-4 py-3">
+              {title && (
+                <h2 className="text-lg font-semibold text-gray-900">
+                  {title}
+                </h2>
+              )}
+              <button
+                className="ml-4 rounded-md p-1 hover:bg-gray-100"
+                onClick={onClose}
+                type="button"
+              >
+                <XMarkIcon
+                  className="h-5 w-5 text-gray-500"
+                  aria-hidden="true"
+                />
+                <span className="sr-only">Close</span>
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-4">
+              {children}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+)
+
+Drawer.displayName = "Drawer" 
