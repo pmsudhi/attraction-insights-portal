@@ -16,16 +16,16 @@ const PageHeader = ({
   className,
 }: PageHeaderProps) => {
   return (
-    <div className={cn('flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4', className)}>
-      <div>
-        <h1 className="scroll-m-20 text-3xl font-bold tracking-tight">{title}</h1>
+    <div className={cn('flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4 animate-fade-in', className)}>
+      <div className="space-y-1">
+        <h1 className="text-fluid-3xl font-bold tracking-tight">{title}</h1>
         {description && (
-          <p className="text-muted-foreground mt-1">{description}</p>
+          <p className="text-muted-foreground">{description}</p>
         )}
       </div>
       
       {actions && (
-        <div className="flex items-center gap-2 mt-2 md:mt-0">
+        <div className="flex items-center gap-2 mt-2 md:mt-0 animate-fade-in animate-delay-200">
           {actions}
         </div>
       )}

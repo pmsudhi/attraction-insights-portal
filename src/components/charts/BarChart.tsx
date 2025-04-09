@@ -10,6 +10,7 @@ import {
   Legend 
 } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 
 interface BarChartProps {
   title: string;
@@ -21,12 +22,12 @@ interface BarChartProps {
 
 const BarChart = ({ title, data, dataKeys, xAxisDataKey, className }: BarChartProps) => {
   return (
-    <Card className={className}>
-      <CardHeader>
+    <Card className={cn("animate-fade-in overflow-hidden", className)}>
+      <CardHeader className="pb-4">
         <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="w-full h-[300px]">
+        <div className="w-full h-[300px] animate-scale-in animate-delay-200">
           <ResponsiveContainer width="100%" height="100%">
             <RechartBarChart
               data={data}
@@ -53,12 +54,14 @@ const BarChart = ({ title, data, dataKeys, xAxisDataKey, className }: BarChartPr
                 }} 
               />
               <Legend />
-              {dataKeys.map((item) => (
+              {dataKeys.map((item, index) => (
                 <Bar 
                   key={item.key}
                   dataKey={item.key} 
                   fill={item.color} 
                   radius={[4, 4, 0, 0]} 
+                  animationDuration={1500}
+                  animationBegin={index * 150}
                 />
               ))}
             </RechartBarChart>

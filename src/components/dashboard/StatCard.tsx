@@ -23,7 +23,7 @@ const StatCard = ({
   const isNegative = change && change < 0;
 
   return (
-    <div className={cn('stat-card', className)}>
+    <div className={cn('stat-card animate-scale-in', className)}>
       <div className="flex justify-between items-start">
         <div className="space-y-1">
           <h3 className="stat-label">{title}</h3>
@@ -34,7 +34,7 @@ const StatCard = ({
               'positive': isPositive,
               'negative': isNegative
             })}>
-              {isPositive ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
+              {isPositive ? <ArrowUp className="h-3 w-3 mr-1" /> : <ArrowDown className="h-3 w-3 mr-1" />}
               <span>{Math.abs(change)}% {changeLabel}</span>
             </div>
           )}
